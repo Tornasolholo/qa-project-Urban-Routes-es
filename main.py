@@ -2,8 +2,11 @@ import data
 from selenium import webdriver
 from selenium.webdriver.support.wait import WebDriverWait
 from localizadores import UrbanRoutesPage
-from helpers import retrieve_phone_code
 import time
+from helpers import retrieve_phone_code
+
+#no estoy usando time.sleep(10) en mi codigo
+
 
 class TestUrbanRoutes:
     driver = None
@@ -29,8 +32,16 @@ class TestUrbanRoutes:
     def test_set_comfort(self):
         routes_page = UrbanRoutesPage(self.driver)
         routes_page.set_comfort_fee()
-        assert routes_page.check_comfort_active() == True
+        assert routes_page.check_comfort_active() == True #este codigo asegura que la tarifa esta activa
 
+    def check_comfort_active(self):
+        try:
+            comfort_active_element = self.driver.find_element(By.CLASS_NAME, "tcard active")
+            tcard_title = comfort_active_element.find_element(By.CLASS_NAME, "tcard-title").text
+            return tcard_title == "Comfort"
+        except:
+            return False
+        
     def test_set_phone_number(self):
         routes_page = UrbanRoutesPage(self.driver)
         phone_number = data.phone_number
@@ -69,8 +80,12 @@ class TestUrbanRoutes:
     def test_wait_driver_information(self):
         routes_page = UrbanRoutesPage(self.driver)
         assert routes_page.get_driver_information() == True  # Asegura que la información del conductor es visible
-        WebDriverWait(self.driver, 3)
+        WebDriverWait(self.driver, 5)
         time.sleep(5)
+
+
     def teardown_class(cls):
         cls.driver.quit()
+
+
 
